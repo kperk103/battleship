@@ -3,7 +3,7 @@
 some reference links:
 - minimax algorithm: https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-1-introduction/
 - battleship minimax reference code: https://github.com/topics/battleship-game?l=c%23
-- gpt design:
+- gpt design: in google docs
 - import random
 
 - - game: 2 separate boards - 10x10 array which labels indices as either empty, taken or not by a ship (0 or 1 or 2 or 3), tostring method, number of ships being placed
