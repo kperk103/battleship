@@ -1,13 +1,16 @@
-BOARD_SIZE = 10
-EMPTY = '--' # 0
-SHIP = '*' #1
-HIT = 'X' # 2
-MISS = 'O' # 3
+from Ship import Ship
 
-class Game:
+BOARD_SIZE = 10
+EMPTY = '-'  # 0
+SHIP = '*'  # 1
+HIT = 'X'  # 2
+MISS = 'O'  # 3
+
+
+class Gameboard:
     def __init__(self):
-        self.board = [[0]*10]*10
-        self.ships = [None]*5
+        self.board = [[0] * 10 for i in range(10)]
+        self.ships = [None] * 5
 
     def isTaken(self, row, col):
         if self.board[row][col] == 1 or self.board[row][col] == 2:
@@ -18,48 +21,51 @@ class Game:
         if self.board[row][col] == 2 or self.board[row][col] == 3:
             return True
         return False
-    
-    def addShip(self, ship):        
+
+    def addShip(self, size, orientation, starting):
+        ship = Ship(size, orientation, starting)
+        if not ship.add_ship():
+            return False
         # check that the ship hasn't already been added
         if self.ships[ship.s_type - 1] != None:
             return False
-        
+
         if ship.ship_orientation == 'H':
             # horizontal
-            start = ship.starting.row
-            end = ship.starting.row + ship.ship_size
-            col = ship.starting.col
-            
-            for row in range(start, end):
+            start = ship.starting_location[1]
+            end = ship.starting_location[1] + ship.ship_size
+            row = ship.starting_location[0]
+
+            for col in range(start, end):
                 if self.board[row][col] == 1:
                     return False
                 else:
                     self.board[row][col] = 1
         else:
             # vertical
-            start = ship.starting.col
-            end = ship.starting.col + ship.ship_size
-            row = ship.starting.row
-            
-            for col in range(start, end):
+            start = ship.starting_location[0]
+            end = ship.starting_location[0] + ship.ship_size
+            col = ship.starting_location[1]
+
+            for row in range(start, end):
                 if self.board[row][col] == 1:
                     return False
                 else:
                     self.board[row][col] = 1
-                    
+
         # add ship object to class so we know that ship exists
         self.ships[ship.s_type - 1] = ship
-        
+
     def isHit(self, row, col):
         if self.board[row][col] == 1:
             return True
         return False
-    
+
     def checkWin(self):
         if self.carrier.hit and self.battleship.hit and self.destroyer.hit and self.submarine.hit and self.cruiser.hit:
             return True
         return False
-    
+
     def toString(self):
         gameboard = ""
         for row in self.board:
@@ -76,5 +82,8 @@ class Game:
             gameboard += "\n"
         print(gameboard)
 
-gameboard = Game()
+gameboard = Gameboard()
+gameboard.addShip(1, "V", (7,7))
+# gameboard.board[2][2] = 1
+# print(gameboard.board[0])
 gameboard.toString()
