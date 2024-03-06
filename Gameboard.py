@@ -1,70 +1,62 @@
-from Ship import Ship
-
-BOARD_SIZE = 10
+COLUMNS = 7
+ROWS = 6
 EMPTY = '-'  # 0
-SHIP = '*'  # 1
-HIT = 'X'  # 2
-MISS = 'O'  # 3
+PLAYER1 = 'X'  # 1
+PLAYER2 = '0'  # 2
 
 
 class Gameboard:
     def __init__(self):
-        self.board = [[0] * 10 for i in range(10)]
-        self.ships = [None] * 5
+        self.board = [[0] * COLUMNS for i in range(ROWS)]
+        self.col_idx = {0: 5, 1: 5, 2: 5, 3: 5, 4: 5, 5: 5, 6: 5}
 
-    def isTaken(self, row, col):
-        if self.board[row][col] == 1 or self.board[row][col] == 2:
-            return True
-        return False
-
-    def hasBeenGuessed(self, row, col):
-        if self.board[row][col] == 2 or self.board[row][col] == 3:
-            return True
-        return False
-
-    def addShip(self, size, orientation, starting):
-        ship = Ship(size, orientation, starting)
-        if not ship.add_ship():
+    def addDisc(self, player, column):
+        if self.col_idx[column - 1] < 0:
+            # column is already full
+            print("Invalid: Column is full")
             return False
-        # check that the ship hasn't already been added
-        if self.ships[ship.s_type - 1] != None:
-            return False
-
-        if ship.ship_orientation == 'H':
-            # horizontal
-            start = ship.starting_location[1]
-            end = ship.starting_location[1] + ship.ship_size
-            row = ship.starting_location[0]
-
-            for col in range(start, end):
-                if self.board[row][col] == 1:
-                    return False
-                else:
-                    self.board[row][col] = 1
         else:
-            # vertical
-            start = ship.starting_location[0]
-            end = ship.starting_location[0] + ship.ship_size
-            col = ship.starting_location[1]
-
-            for row in range(start, end):
-                if self.board[row][col] == 1:
-                    return False
-                else:
-                    self.board[row][col] = 1
-
-        # add ship object to class so we know that ship exists
-        self.ships[ship.s_type - 1] = ship
-
-    def isHit(self, row, col):
-        if self.board[row][col] == 1:
-            return True
-        return False
+            if player == 1:
+                self.board[self.col_idx[column -1]][column - 1] = 1
+            else:
+                self.board[self.col_idx[column - 1]][column - 1] = 2
+            self.col_idx[column - 1] -= 1
+        self.checkWin()
+        return True
 
     def checkWin(self):
-        if self.carrier.hit and self.battleship.hit and self.destroyer.hit and self.submarine.hit and self.cruiser.hit:
-            return True
-        return False
+        winner = 0
+        # check if win in column
+        for col in range(COLUMNS):
+            for row in range(ROWS-3):
+                if self.board[row][col] != 0 and self.board[row][col] == self.board[row+1][col] == self.board[row+2][col] == self.board[row+3][col]:
+                    winner = self.board[row][col]
+                    break
+        # check if win in row
+        for col in range(COLUMNS - 3):
+            for row in range(ROWS):
+                if self.board[row][col] != 0 and self.board[row][col] == self.board[row][col+1] == self.board[row][col+2] == self.board[row][col+3]:
+                    winner = self.board[row][col]
+                    break
+        # check if win in positive diagonal
+        for col in range(COLUMNS - 3):
+            for row in range(ROWS - 3):
+                if self.board[row][col] != 0 and self.board[row][col] == self.board[row+1][col+1] == self.board[row+2][col+2] == self.board[row+3][col+3]:
+                    winner = self.board[row][col]
+                    break
+        # check if win in negative diagonal
+        for col in range(COLUMNS - 3):
+            for row in range(3, ROWS):
+                if self.board[row][col] != 0 and self.board[row][col] == self.board[row-1][col+1] == self.board[row-2][col+2] == self.board[row-3][col+3]:
+                    winner = self.board[row][col]
+                    break
+        if winner == 1:
+            print("Player 1 wins!")
+        elif winner == 2:
+            print("Player 2 wins!")
+        else:
+            return False
+        return True
 
     def toString(self):
         gameboard = ""
@@ -74,16 +66,8 @@ class Gameboard:
                 if col == 0:
                     gameboard += EMPTY + " | "
                 elif col == 1:
-                    gameboard += SHIP + " | "
+                    gameboard += PLAYER1 + " | "
                 elif col == 2:
-                    gameboard += HIT + " | "
-                elif col == 3:
-                    gameboard += MISS + " | "
+                    gameboard += PLAYER2 + " | "
             gameboard += "\n"
         print(gameboard)
-
-gameboard = Gameboard()
-gameboard.addShip(1, "V", (7,7))
-# gameboard.board[2][2] = 1
-# print(gameboard.board[0])
-gameboard.toString()
