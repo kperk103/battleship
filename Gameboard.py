@@ -24,7 +24,15 @@ class Gameboard:
         self.checkWin()
         return True
 
-    def checkWin(self):
+
+    """
+    This function checks to see if we are at a goal state. Returns one of the following:
+    0 - If the game is to continue: no winner declared yet and there are slots remaining
+    1 - If player 1 wins
+    2 - If player 2 wins
+    -1 - If the game ends in a draw
+    """
+    def checkWin(self) -> int:
         winner = 0
         # check if win in column
         for col in range(COLUMNS):
@@ -50,14 +58,14 @@ class Gameboard:
                 if self.board[row][col] != 0 and self.board[row][col] == self.board[row-1][col+1] == self.board[row-2][col+2] == self.board[row-3][col+3]:
                     winner = self.board[row][col]
                     break
-        if winner == 1:
-            print("Player 1 wins!")
-        elif winner == 2:
-            print("Player 2 wins!")
-        else:
-            return False
-        return True
-
+        if winner != 0:
+            return winner
+        else: 
+            chips_left = 0
+            for values in self.col_idx.values():
+                chips_left += values
+            return 0 if chips_left > 0 else -1
+        
     def toString(self):
         gameboard = ""
         for row in self.board:
