@@ -1,44 +1,39 @@
-import Game
-import Ship
+from Gameboard import Gameboard
 
 if __name__ == "__main__":
-    game_over = False
-    game = Game()
+    game = Gameboard()
+    turn_number = -1 # Turns start on turn # 0.
 
-    while not game_over:
-        print("Welcome to Battleship!")
-        names = {1:"Carrier (5 cells)", 2:"Battleship (4 cells)", 3:"Cruiser (3 cells)", 4:"Submarine (3 cells)", 5:"Destroyer (2 cells)"}
+    print("Welcome to Connect 4!")
 
-        # Add all ships to board:
-        for ship_type in range(1,6):
-            orientation = ""
+    #Game continues as long as nobody wins... 
+    #is there a case when all discs are used and nobody wins?
+    while not game.checkWin():
+        turn_number += 1
+        invalid_input = True
 
-            flag = 0 # Will be stuck in while loop if input is no good.
-            while not flag:
-                orientation = input(f"Input {names[ship_type]} Orientation (H/V): ")
-                if orientation == "H":
-                    flag = 1
-                elif orientation == "V":
-                    flag = 2
-        
-                coord = ""
-                if flag == 0:
-                    continue
-                elif flag == 1:
-                    coord = input("Input Leftmost Coordinate (x,y): ")
-                else:
-                    coord = input("Input Topmost Coordinate (x,y): ")
-                splitstring = coord.split(",")
-                x = int(splitstring[0][1:])
-                y = int(splitstring[1][:-1])
-
-                new_ship = Ship(ship_type, orientation, (x,y))
-
-                if new_ship.add_ship() and game.addShip(new_ship):
-                    print(f"You have added a {names[ship_type]} at coordinates ({x},{y}) at orientation {orientation}")
-                    game.toString
-                else:
-                    print("Invalid input, try again:")
-                    flag = 0
-                    game.toString
+        while invalid_input:
+            game.toString()
+            player = (turn_number % 2) + 1
+            col = input(f"Player {player} ({'X' if player == 1 else '0'}), Select a column (1-7): ")
+            print("\n\n\n---------------------------------------------------")
             
+            try:
+                col = int(col)
+                if col < 1 or col > 7 or not game.addDisc(player, col):
+                    print("Invalid Input")
+                else:
+                    invalid_input = False
+            except ValueError:
+                print("Invalid Input")
+
+    print(f"Player {game.checkWin()} wins!")
+    game.toString()
+            
+
+
+
+
+
+
+        
