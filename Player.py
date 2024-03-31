@@ -3,7 +3,7 @@ from Minimax import Minimax
 
 if __name__ == "__main__":
     game = Gameboard()
-    mini = Minimax(1)
+    mini = Minimax(3)
     turn_number = -1 # Turns start on turn # 0.
 
     print("Welcome to Connect 4!")
