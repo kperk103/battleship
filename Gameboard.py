@@ -8,18 +8,18 @@ PLAYER2 = '0'  # 2
 class Gameboard:
     def __init__(self):
         self.board = [[0] * COLUMNS for i in range(ROWS)]
-        self.col_idx = {0: 5, 1: 5, 2: 5, 3: 5, 4: 5, 5: 5, 6: 5}
+        self.col_idx = {0: 6, 1: 6, 2: 6, 3: 6, 4: 6, 5: 6, 6: 6}
 
     def addDisc(self, player, column):
-        if self.col_idx[column - 1] < 0:
+        if self.col_idx[column - 1] <= 0:
             # column is already full
             print("Invalid: Column is full")
             return False
         else:
             if player == 1:
-                self.board[self.col_idx[column -1]][column - 1] = 1
+                self.board[self.col_idx[column - 1] - 1][column - 1] = 1
             else:
-                self.board[self.col_idx[column - 1]][column - 1] = 2
+                self.board[self.col_idx[column - 1] - 1][column - 1] = 2
             self.col_idx[column - 1] -= 1
         self.checkWin()
         return True
