@@ -26,45 +26,63 @@ class Gameboard:
 
 
     """
-    This function checks to see if we are at a goal state. Returns one of the following:
+    This function checks to see if we are at a goal state. Returns a tuple where the first element is:
     0 - If the game is to continue: no winner declared yet and there are slots remaining
     1 - If player 1 wins
     2 - If player 2 wins
     -1 - If the game ends in a draw
+    The second element is a tuple, consisting of the row and col the win starts on
+    the third element is:
+    0 - If the game was won on a column
+    1 - If the game was won on a row
+    2 - If the game was won on the positive diagonal
+    3 - If the game was won on the negative diagonal
+
+    Note that elements 2 and 3 will be None if element 1 is -1 or 0 
     """
     def checkWin(self) -> int:
         winner = 0
+        direction = None
+        location = None
         # check if win in column
         for col in range(COLUMNS):
             for row in range(ROWS-3):
                 if self.board[row][col] != 0 and self.board[row][col] == self.board[row+1][col] == self.board[row+2][col] == self.board[row+3][col]:
                     winner = self.board[row][col]
+                    direction = 0
+                    location = (row, col)
                     break
         # check if win in row
         for col in range(COLUMNS - 3):
             for row in range(ROWS):
                 if self.board[row][col] != 0 and self.board[row][col] == self.board[row][col+1] == self.board[row][col+2] == self.board[row][col+3]:
                     winner = self.board[row][col]
+                    direction = 1
+                    location = (row, col)
                     break
         # check if win in positive diagonal
         for col in range(COLUMNS - 3):
             for row in range(ROWS - 3):
                 if self.board[row][col] != 0 and self.board[row][col] == self.board[row+1][col+1] == self.board[row+2][col+2] == self.board[row+3][col+3]:
                     winner = self.board[row][col]
+                    direction = 2
+                    location = (row, col)
                     break
         # check if win in negative diagonal
         for col in range(COLUMNS - 3):
             for row in range(3, ROWS):
                 if self.board[row][col] != 0 and self.board[row][col] == self.board[row-1][col+1] == self.board[row-2][col+2] == self.board[row-3][col+3]:
                     winner = self.board[row][col]
+                    direction = 3
+                    location = (row, col)
                     break
         if winner != 0:
-            return winner
+            return (winner, location, direction)
         else: 
             chips_left = 0
             for values in self.col_idx.values():
                 chips_left += values
-            return 0 if chips_left > 0 else -1
+            return (0, None, None) if chips_left > 0 else (-1, None, None)
         
     def toString(self):
         gameboard = ""
