@@ -1,5 +1,4 @@
 import Gameboard
-import copy
 
 #connect 4 minimax
 
@@ -98,19 +97,37 @@ class Minimax:
         
 
 
-    #takes a boardstate array, and returns a new boardstate array with the specified 
-    #piece dropped into the specified column
+    #takes a boardstate array, and returns the boardstate array with the specified 
+    #piece dropped into the specified column, in place
     def dropPiece(self, currState, piece, column):
         row = 5
-
-        newState = copy.deepcopy(currState)
 
         while currState[row][column] != 0 or currState[row][column] != 0:
             row -= 1
 
-        newState[row][column] = piece
+        currState[row][column] = piece
 
-        return newState
+        return currState
+    
+    #takes a boardstate array, and removes the topmost piece in a specified column,
+    #in place
+    #takes a boardstate array, and removes the topmost piece in a specified column,
+    #in place
+    def removePiece(self, currState, column):
+        row = 5
+
+        while currState[row][column] != 0 or currState[row][column] != 0: 
+            row -= 1
+            if row == -1: 
+                break
+            
+        row += 1
+
+        if row == 6: 
+            return currState
+
+        currState[row][column] = 0 #0 is empty
+        return currState
 
 
 
@@ -210,8 +227,10 @@ class Minimax:
             if validDrop[i] == 1:
                 updated = self.dropPiece(currState, currPlayer, i)
                 score = self.miniHelper(updated, nextPlayer, maximizer, depth + 1, alpha, beta)[1]
+                #undo drop
+                self.removePiece(currState, i)
 
-                if currPlayer == maximizer: 
+                if currPlayer == maximizer:
                     if score > val: 
                         val = score
                         col = i
