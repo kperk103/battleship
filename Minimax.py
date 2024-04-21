@@ -1,4 +1,5 @@
 import Gameboard
+import random
 
 #connect 4 minimax
 
@@ -102,8 +103,10 @@ class Minimax:
     def dropPiece(self, currState, piece, column):
         row = 5
 
-        while currState[row][column] != 0 or currState[row][column] != 0:
+        while currState[row][column] != 0:
             row -= 1
+            if row == 0: 
+                break
 
         currState[row][column] = piece
 
@@ -116,13 +119,13 @@ class Minimax:
     def removePiece(self, currState, column):
         row = 5
 
-        while currState[row][column] != 0 or currState[row][column] != 0: 
+        while currState[row][column] != 0:
             row -= 1
             if row == -1: 
                 break
             
         row += 1
-
+        
         if row == 6: 
             return currState
 
@@ -244,6 +247,13 @@ class Minimax:
                 if alpha >= beta: 
                         break
         
+        if col == -1: 
+            #the bot knows they will lose no matter what next turn, 
+            #just place the disc in the first column that is valid
+            #to prevent it from giving up.
+            indices = [i for i, x in enumerate(validDrop) if x == 1]
+            col = random.choice(indices)
+
         return col, val
     
 
