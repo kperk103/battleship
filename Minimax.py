@@ -148,6 +148,8 @@ class Minimax:
             score += 5
         elif window.count(piece) == 1 and window.count(EMPTY) == 3:
             score += 2
+        elif window.count(piece) == 0 and window.count(EMPTY) == 3:
+            score -= 1
         elif window.count(piece) == 0 and window.count(EMPTY) == 2:
             score -= 4
         elif window.count(piece) == 0 and window.count(EMPTY) == 1:
