@@ -24,10 +24,10 @@ pygame.display.set_caption("Connect Four")
 
 TIME_DELAY_AFTER_GAME = 0.05
 GAMES = 100
-DEPTH_PLAYER_ONE = 2 
+DEPTH_PLAYER_ONE = 2
 DEPTH_PLAYER_TWO = 3
 
-RANDOMDEPTHS = True #Set true if you want to randomize the depths of the agents, each game
+RANDOMDEPTHS = False #Set true if you want to randomize the depths of the agents, each game
 LOWERBOUND = 1 #lower bound for the depth randomization
 UPPERBOUND = 4 #upper bound for the depth randomization
 
@@ -225,9 +225,13 @@ def play_game(player_one_score, player_two_score, ties, player1, player2):
 
     #display results, close pygame once player closes the game, if we are on last GAME
     #draw line through winning players pieces
-    winning_player, (row, col), direction = game.checkWin()
+    winning_player, location, direction = game.checkWin()
+    row = 0
+    col = 0
     if winning_player == -1: 
         ties += 1
+    else:
+        (row, col) = location
 
     if winning_player == 1: player_one_score += 1
     if winning_player == 2: player_two_score += 1
