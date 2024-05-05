@@ -14,7 +14,7 @@ PLAYER2 = 2  # 2
 
 class Minimax:
 
-    def __init__(self, depth=float('inf'), alphaBeta=True):
+    def __init__(self, depth=float('inf'), alphaBeta=False):
         self.depth = depth
         self.alphaBeta = alphaBeta
 

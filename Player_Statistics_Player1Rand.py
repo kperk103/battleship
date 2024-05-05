@@ -22,7 +22,7 @@ def main():
 
     for _ in range(NUM_GAMES):
         game = Gameboard()
-        minimax = Minimax(depth=2)  # Adjust depth as needed, it affects the runtime though..
+        minimax = Minimax(depth=2, alphaBeta=True)  # Adjust depth as needed, it affects the runtime though..
         game_over = False
         start_time = time.time()
 
