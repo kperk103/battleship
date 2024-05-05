@@ -12,7 +12,7 @@ def main():
     total_time = 0
 
     # Initialize Minimax for both players
-    minimax_player1 = Minimax(depth = 3)
+    minimax_player1 = Minimax(depth = 2)
     minimax_player2 = Minimax(depth = 3)
 
     for _ in range(NUM_GAMES):

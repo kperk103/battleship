@@ -14,8 +14,9 @@ PLAYER2 = 2  # 2
 
 class Minimax:
 
-    def __init__(self, depth=float('inf')):
+    def __init__(self, depth=float('inf'), alphaBeta=True):
         self.depth = depth
+        self.alphaBeta = alphaBeta
 
 
 
@@ -246,7 +247,9 @@ class Minimax:
                         col = i
                     beta = min(beta, val)
 
-                if alpha >= beta: 
+                # if using alpha beta pruning
+                if (self.alphaBeta):
+                    if alpha >= beta:
                         break
         
         if col == -1: 
@@ -266,7 +269,7 @@ example usage:
 
 ai = Minimax()
 mini1 = Minimax(3)  #<--- creates a minimax class object, with maximum search depth of length 3
-mini2 = Minimax() #<--- creates a minimax class object with no maximhm search depth
+mini2 = Minimax() #<--- creates a minimax class object with no maximum search depth
 
 mini1.minimax(currState, currPlayer) #<-- returns an optimal column to drop, as well as the heuristic val
 '''
