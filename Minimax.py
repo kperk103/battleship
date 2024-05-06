@@ -166,11 +166,6 @@ class Minimax:
     def scorePos(self, currState, piece):
         score = 0
 
-        #best strategy is to place in the center
-        middle = self.getCols(currState)[len(self.getCols(currState)) // 2]
-        middle_count = middle.count(piece)
-        #score += middle_count * 2
-
         #score columns
         for column in self.getCols(currState):
             for i in range(ROWS - 3):
@@ -184,15 +179,15 @@ class Minimax:
                 score += self.evaluateWindow(window, piece)
 
         #score positive sloped diagonal
-        for r in range(ROWS - 3):
-            for c in range(COLUMNS - 3):
-                window = [currState[r+i][c+i] for i in range(4)]
+        for row in range(ROWS - 3):
+            for col in range(COLUMNS - 3):
+                window = [currState[row + i][col + i] for i in range(4)]
                 score += self.evaluateWindow(window, piece)
 
         #score negative sloped diagonal
-        for r in range(ROWS - 3):
-            for c in range(COLUMNS - 3):
-                window = [currState[r+3-i][c+i] for i in range(4)]
+        for row in range(ROWS - 3):
+            for col in range(COLUMNS - 3):
+                window = [currState[row + 3 - i][col + i] for i in range(4)]
                 score += self.evaluateWindow(window, piece)
 
         return score

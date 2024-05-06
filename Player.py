@@ -5,11 +5,12 @@ import numpy as np
 import sys
 import random
 import time
+import random
 
 #init pygame and constants
 pygame.init()
 SIZE = 7  #7 rows, 6 cols
-WIDTH, HEIGHT = 80 * SIZE, 80 * SIZE #must be multiples of SIZE
+WIDTH, HEIGHT = 100 * SIZE, 100 * SIZE #must be multiples of SIZE
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 PADDING = 1 * SIZE
 BORDER = 1
@@ -22,10 +23,10 @@ SKYBLUE, GREY, PINK = (129, 193, 222), (151, 222, 255), (235, 80, 151)
 BACKGROUND, HIGHLIGHTED = SKYBLUE, PINK
 pygame.display.set_caption("Connect Four")
 
-TIME_DELAY_AFTER_GAME = 0.05
+TIME_DELAY_AFTER_GAME = 0.05 #this lets us see the winning strikethrough line easier
 GAMES = 100
-DEPTH_PLAYER_ONE = 2
-DEPTH_PLAYER_TWO = 3
+DEPTH_PLAYER_ONE = 3
+DEPTH_PLAYER_TWO = 'Random' #change to an int if you dont want 'random' word on the display
 
 RANDOMDEPTHS = False #Set true if you want to randomize the depths of the agents, each game
 LOWERBOUND = 1 #lower bound for the depth randomization
@@ -33,10 +34,14 @@ UPPERBOUND = 4 #upper bound for the depth randomization
 
 #update these accordingly. IF YOU WANT TO PLAY AGAINST THE AI,
 #MAKE SURE TO UPDATE bothAI to FALSE. 
-PLAYER1 = Minimax(DEPTH_PLAYER_ONE)
-PLAYER2 = Minimax(DEPTH_PLAYER_TWO)
+PLAYER1 = Minimax(DEPTH_PLAYER_ONE, alphaBeta=True)
+PLAYER2 = Minimax(DEPTH_PLAYER_TWO,alphaBeta=True)
 BOTHAI = True
+#set this to True if you want p2 to be random choice
+USERANDOM = True
 
+NEXTNOALPHABETA = [False, 0] #keep this false, we change to true if we detect a click (next game should be w/o pruning)
+NOALPHABETAGAMESCOUNT = 2
 
 #draws the gameboard in pygame. If col value is None, we just draw the entire board
 #if col value is an int, we only draw the piece that was most recently 
@@ -97,6 +102,9 @@ def has_quit():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return True
+        elif event.type == pygame.MOUSEBUTTONDOWN: 
+            if BOTHAI: #only do this if both players are ai
+                NEXTNOALPHABETA[0] = True
     return False
 
 def has_clicked(): 
@@ -198,7 +206,23 @@ def play_game(player_one_score, player_two_score, ties, player1, player2):
                 #if you want a minimaxer, just use 
                 # col = mini.minimax(game.board, 2) + 1
                 # 2 for player 2 in param, 1 for player 1
-                col = player2.minimax(game.board, 2) + 1
+                if not USERANDOM:
+                    col = player2.minimax(game.board, 2) + 1
+                else: #randomize col
+                    validDrop = player2.getValid(game.board)
+                    valids = [index for index, value in enumerate(validDrop) if value == 1]
+
+                    mean = 7/2 #middle of columns
+                    std_dev = 1 #std dev arbitrary
+                    col = int(np.random.normal(mean, std_dev))
+
+                    while col < 0 or col > 6 or validDrop[col] != 1: 
+                        col = int(np.random.normal(mean, std_dev))
+                    
+                    col = col + 1
+
+                    
+
 
             #print("\n\n\n---------------------------------------------------")
             
@@ -302,10 +326,19 @@ if __name__ == "__main__":
         if RANDOMDEPTHS:
             PLAYER1.depth = random.randint(LOWERBOUND, UPPERBOUND)
             PLAYER2.depth = random.randint(LOWERBOUND, UPPERBOUND)
-
+        if NEXTNOALPHABETA[0]: 
+            PLAYER1.alphaBeta = False
+            NEXTNOALPHABETA[1] += 1
         #initialize with 0 for each player score and 0 ties
         player_one_score, player_two_score, ties = play_game(player_one_score, player_two_score, ties, PLAYER1, PLAYER2) 
         game_count += 1
+
+        #reset to true alphabeta if we've reached enough games
+        if NEXTNOALPHABETA[0] and NEXTNOALPHABETA[1] >= NOALPHABETAGAMESCOUNT:
+            PLAYER1.alphaBeta = True
+            NEXTNOALPHABETA[0] = False
+            NEXTNOALPHABETA[1] = 0
+
     
     pygame.quit()
     sys.exit()
